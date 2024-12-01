@@ -24,7 +24,7 @@ To install Job Finder Go, follow these steps:
 Here's an example of how to use Job Finder Go:
 
 ```sh
-go run main.go
+go run cmd/main.go
 ```
 
 ## Contribution
