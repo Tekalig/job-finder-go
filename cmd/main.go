@@ -2,34 +2,39 @@
 package main
 
 import (
-    "log"
-    "os"
-    "github.com/gin-gonic/gin"
-    "github.com/Tekalig/job-finder-go/config"
-    "github.com/Tekalig/job-finder-go/routes"
-    "github.com/Tekalig/job-finder-go/middleware"
+	"log"
+	"os"
+
+	"github.com/Tekalig/job-finder-go/config"
+	"github.com/Tekalig/job-finder-go/hasura"
+	"github.com/Tekalig/job-finder-go/middleware"
+	"github.com/Tekalig/job-finder-go/routes"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    // Load configuration
-    cfg, err := config.Load()
-    if err != nil {
-        log.Fatal("Failed to load config:", err)
-    }
+	// Load configuration
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal("Failed to load config:", err)
+	}
 
-    // Initialize router
-    r := gin.Default()
+	// Initialize Hasura client
+	hasuraClient := hasura.NewClient(cfg.HasuraEndpoint, cfg.HasuraAdminSecret)
 
-    // Add middleware
-    r.Use(middleware.CORS())
+	// Initialize router
+	r := gin.Default()
 
-    // Setup routes
-    routes.SetupRoutes(r, cfg)
+	// Add middleware
+	r.Use(middleware.CORS())
 
-    // Start server
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
-    r.Run(":" + port)
+	// Setup routes
+	routes.SetupRoutes(r, cfg, hasuraClient)
+
+	// Start server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 }
