@@ -71,11 +71,10 @@ func (h *LoginHandler) Login(c *gin.Context) {
 	c.JSON(200, gin.H{"token": token})
 }
 
-// Add this function to fix the error in routes
-func Login(c *gin.Context) {
+func Login(c *gin.Context, hasuraClient *hasura.Client, jwtSecret string) {
 	handler := LoginHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
-		jwtSecret:    "your-jwt-secret",
+		hasuraClient: hasuraClient,
+		jwtSecret:    jwtSecret,
 	}
 	handler.Login(c)
 }
