@@ -49,10 +49,9 @@ func (h *ExpertHandler) Signup(c *gin.Context) {
 	c.JSON(201, response)
 }
 
-// Add this function to fix the error in routes
-func ExpertSignup(c *gin.Context) {
+func ExpertSignup(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := ExpertHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.Signup(c)
 }
