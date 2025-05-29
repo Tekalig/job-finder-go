@@ -149,31 +149,30 @@ func (h *JobHandler) DeleteJob(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-// Add these functions to fix the error in routes
-func CreateJob(c *gin.Context) {
+func CreateJobHandler(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := JobHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.CreateJob(c)
 }
 
-func GetJobs(c *gin.Context) {
+func GetJobsHandler(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := JobHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.GetJobs(c)
 }
 
-func UpdateJob(c *gin.Context) {
+func UpdateJobHandler(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := JobHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.UpdateJob(c)
 }
 
-func DeleteJob(c *gin.Context) {
+func DeleteJobHandler(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := JobHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.DeleteJob(c)
 }
