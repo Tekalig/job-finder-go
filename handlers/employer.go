@@ -26,36 +26,57 @@ func (h *EmployerHandler) Signup(c *gin.Context) {
 
 	// Create employer mutation
 	mutation := `
-        mutation CreateEmployer($input: employers_insert_input!) {
-            insert_employers_one(object: $input) {
-                company_id
-                email
-            }
-        }
-    `
+		mutation CreateEmployer($companyName: String!, $email: String!, $password: String!, $companyDescription: String!, $contactNumber: String!) {
+			insert_employers_one(object: {
+				company_name: $companyName,
+				email: $email,
+				password: $password,
+				company_description: $companyDescription,
+				contact_number: $contactNumber
+			}) {
+				company_id
+				company_name
+				email
+				company_description
+				contact_number
+			}
+		}
+	`
 
 	// Execute mutation
 	var response struct {
 		InsertEmployersOne struct {
-			CompanyID int    `json:"company_id"`
-			Email     string `json:"email"`
+			CompanyID          int    `json:"company_id"`
+			CompanyName        string `json:"company_name"`
+			Email              string `json:"email"`
+			CompanyDescription string `json:"company_description"`
+			ContactNumber      string `json:"contact_number"`
 		} `json:"insert_employers_one"`
 	}
 
 	if err := h.hasuraClient.Execute(mutation, map[string]interface{}{
-		"input": input,
+		"companyName":        input.CompanyName,
+		"email":              input.Email,
+		"password":           input.Password,
+		"companyDescription": input.CompanyDescription,
+		"contactNumber":      input.ContactNumber,
 	}, &response); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(201, response)
+	c.JSON(201, gin.H{
+		"company_id":          response.InsertEmployersOne.CompanyID,
+		"company_name":        response.InsertEmployersOne.CompanyName,
+		"email":               response.InsertEmployersOne.Email,
+		"company_description": response.InsertEmployersOne.CompanyDescription,
+		"contact_number":      response.InsertEmployersOne.ContactNumber,
+	})
 }
 
-// Add this function to fix the error in routes
-func EmployerSignup(c *gin.Context) {
+func EmployerSignup(c *gin.Context, hasuraClient *hasura.Client) {
 	handler := EmployerHandler{
-		hasuraClient: hasura.NewClient("your-hasura-endpoint", "your-admin-secret"),
+		hasuraClient: hasuraClient,
 	}
 	handler.Signup(c)
 }
